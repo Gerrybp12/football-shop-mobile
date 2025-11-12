@@ -12,7 +12,7 @@ class ProductFormPage extends StatefulWidget {
 class _ProductFormPageState extends State<ProductFormPage> {
   final _formKey = GlobalKey<FormState>();
   String _title = "";
-  double _price = 0;
+  int _price = 0;
   String _content = "";
   String _category = "sepatu"; // default
   String _thumbnail = "";
@@ -78,15 +78,17 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       decoration: InputDecoration(
                         hintText: "Masukkan harga produk",
                         labelText: "Harga Produk",
-                        prefixText: "Rp ",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
                       onChanged: (String? value) {
-                        setState(() {
-                          _price = double.tryParse(value!) ?? 0;
-                        });
+                        final parsed = int.tryParse(value!);
+                          if (parsed == null) {
+                            _price = 0;
+                          } else {
+                            _price = parsed;
+                          }
                       },
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
@@ -207,6 +209,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text('Nama: $_title'),
+                                        Text('Harga: $_price'),
                                         Text('Deskripsi: $_content'),
                                         Text('Kategori: $_category'),
                                         Text('Thumbnail: $_thumbnail'),
