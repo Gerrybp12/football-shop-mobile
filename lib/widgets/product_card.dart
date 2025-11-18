@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:football_shop/screens/menu.dart';
+import 'package:football_shop/screens/product_entry_list.dart';
 import 'package:football_shop/screens/productlist_form.dart';
+import 'package:football_shop/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class ItemCard extends StatelessWidget {
   // Menampilkan kartu dengan ikon dan nama.
 
   final ItemHomepage item; 
+  final int userId;
 
-  const ItemCard(this.item, {super.key}); 
+  const ItemCard(this.item, {super.key, required this.userId}); 
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Material(
       // Menentukan warna latar belakang dari tema aplikasi.
       color: item.color,
@@ -19,7 +25,7 @@ class ItemCard extends StatelessWidget {
 
       child: InkWell(
         // Aksi ketika kartu ditekan.
-        onTap: () {
+        onTap: () async {
           // Menampilkan pesan SnackBar saat kartu ditekan.
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
@@ -29,8 +35,39 @@ class ItemCard extends StatelessWidget {
 
             if (item.name == "Create Product") {
             Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const ProductFormPage()));
+              MaterialPageRoute(builder: (context) => ProductFormPage(userId: userId,)));
           }
+          else if (item.name == "All Product") {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProductEntryListPage(userId: userId,)
+                ),
+            );
+        }
+        else if (item.name == "Logout") {
+          final response = await request.logout(
+              "http://localhost:8000/auth/logout/");
+          String message = response["message"];
+          if (context.mounted) {
+              if (response['status']) {
+                  String uname = response["username"];
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("$message See you again, $uname."),
+                  ));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+              } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(message),
+                      ),
+                  );
+              }
+          }
+      }
         },
         // Container untuk menyimpan Icon dan Text
         child: Container(

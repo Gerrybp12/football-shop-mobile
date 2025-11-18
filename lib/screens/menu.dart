@@ -3,7 +3,9 @@ import 'package:football_shop/widgets/left_drawer.dart';
 import 'package:football_shop/widgets/product_card.dart';
 
 class MyHomePage extends StatelessWidget {
-    MyHomePage({super.key});
+  final int userId;
+    MyHomePage({super.key, required this.userId});
+    
 
     final String nama = "Gerry Bima Putra"; //nama
     final String npm = "2406495464"; //npm
@@ -11,7 +13,7 @@ class MyHomePage extends StatelessWidget {
 
     final List<ItemHomepage> items = [
     ItemHomepage("All Product", Colors.blue),
-    ItemHomepage("My Product", Colors.green),
+    ItemHomepage("Logout", Colors.green),
     ItemHomepage("Create Product", Colors.red),
   ];
 
@@ -32,7 +34,7 @@ class MyHomePage extends StatelessWidget {
         // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      drawer: LeftDrawer(),
+      drawer: LeftDrawer(userId: userId,),
       // Body halaman dengan padding di sekelilingnya.
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -83,7 +85,7 @@ class MyHomePage extends StatelessWidget {
 
                     // Menampilkan ItemCard untuk setiap item dalam list items.
                     children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
+                      return ItemCard(item, userId: userId,);
                     }).toList(),
                   ),
                 ],
